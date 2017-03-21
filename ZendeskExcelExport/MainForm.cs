@@ -215,17 +215,33 @@ namespace ZendeskExcelExport
         private void SetValue(ICell cell, object value)
         {
             if (value == null || value is string)
-                cell.SetCellValue((string)value);
+            {
+                string stringValue = (string)value;
+                // NPOI supports a maximum string contents of 32767 characters.
+                if (stringValue != null && stringValue.Length > 32767)
+                    stringValue = stringValue.Substring(0, 32767);
+                cell.SetCellValue(stringValue);
+            }
             else if (value is int)
+            {
                 cell.SetCellValue((int)value);
+            }
             else if (value is long)
+            {
                 cell.SetCellValue((long)value);
+            }
             else if (value is double)
+            {
                 cell.SetCellValue((double)value);
+            }
             else if (value is DateTime)
+            {
                 cell.SetCellValue((DateTime)value);
+            }
             else
+            {
                 throw new ArgumentException("Invalid type");
+            }
         }
 
         private static ICellStyle CreateDateStyle(HSSFWorkbook workbook)
